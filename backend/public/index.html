@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drone Delivery API</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+      color: #333;
+    }
+    .container {
+      background-color: #f5f5f5;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    .status {
+      padding: 15px;
+      background: #e8f5e9;
+      border-left: 4px solid #4caf50;
+      margin: 20px 0;
+    }
+    pre {
+      background: #f8f8f8;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Autonomous Drone Delivery System</h1>
+    <p>Welcome to the Drone Delivery System API server. This server handles all backend operations for the autonomous drone delivery platform.</p>
+    
+    <div class="status">
+      <h2>API Status</h2>
+      <div id="status-message">Checking status...</div>
+    </div>
+
+    <h2>API Documentation</h2>
+    <p>Available endpoints:</p>
+    <pre>/api/status - Check system status</pre>
+    
+    <script>
+      // Fetch API status when page loads
+      fetch('/api/status')
+        .then(response => response.json())
+        .then(data => {
+          const statusElement = document.getElementById('status-message');
+          statusElement.innerHTML = `
+            Status: <strong>${data.status}</strong><br>
+            Message: ${data.message}<br>
+            Time: ${new Date(data.timestamp).toLocaleString()}
+          `;
+        })
+        .catch(error => {
+          const statusElement = document.getElementById('status-message');
+          statusElement.innerHTML = `Error: Could not connect to API. ${error.message}`;
+          statusElement.style.background = '#ffebee';
+          statusElement.style.borderLeftColor = '#f44336';
+        });
+    </script>
+  </div>
+</body>
+</html>
