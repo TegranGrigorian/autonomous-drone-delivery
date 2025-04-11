@@ -1,17 +1,54 @@
-version: '3'
+version: '3.8'
 
 services:
   backend:
     build:
       context: ./backend
-      dockerfile: ../deployment/docker/backend/Dockerfile
+      dockerfile: Dockerfile
+    restart: always
     ports:
-      - "5000:5000"
+      - "8080:8080"
     environment:
-      - PORT=5000
+      - NODE_ENV=production
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_NAME=${DB_NAME}
+    depends_on:
+      - database
     networks:
-      - drone-network
+      - app-network
+
+  database:
+    image: postgres:13
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+  drone-simulator:
+    build:
+      context: ./drone-simulator
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - BACKEND_URL=http://backend:8080
+    depends_on:
+      - backend
+    networks:
+      - app-network
 
 networks:
-  drone-network:
+  app-network:
     driver: bridge
+
+volumes:
+  db-data:
